@@ -10390,9 +10390,9 @@
       <p>ECMAScript differs from the Java programming language in the behaviour of Unicode escape sequences. In a Java program, if the Unicode escape sequence `\\u000A`, for example, occurs within a single-line comment, it is interpreted as a line terminator (Unicode code point U+000A is LINE FEED (LF)) and therefore the next code point is not part of the comment. Similarly, if the Unicode escape sequence `\\u000A` occurs within a string literal in a Java program, it is likewise interpreted as a line terminator, which is not allowed within a string literal&mdash;one must write `\\n` instead of `\\u000A` to cause a LINE FEED (LF) to be part of the String value of a string literal. In an ECMAScript program, a Unicode escape sequence occurring within a comment is never interpreted and therefore cannot contribute to termination of the comment. Similarly, a Unicode escape sequence occurring within a string literal in an ECMAScript program always contributes to the literal and is never interpreted as a line terminator or as a code point that might terminate the string literal.</p>
     </emu-note>
 
-    <emu-clause id="sec-utf16encoding" aoid="UTF16Encoding">
-      <h1>Static Semantics: UTF16Encoding ( _cp_ )</h1>
-      <p>The abstract operation UTF16Encoding takes argument _cp_ (a numeric code point value). It performs the following steps when called:</p>
+    <emu-clause id="sec-codepointtoutf16codeunits" aoid="CodePointToUTF16CodeUnits" oldids="sec-utf16encoding">
+      <h1>Static Semantics: CodePointToUTF16CodeUnits ( _cp_ )</h1>
+      <p>The abstract operation CodePointToUTF16CodeUnits takes argument _cp_ (a numeric code point value). It performs the following steps when called:</p>
       <emu-alg>
         1. Assert: 0 &le; _cp_ &le; 0x10FFFF.
         1. If _cp_ &le; 0xFFFF, return _cp_.
@@ -10406,7 +10406,7 @@
       <h1>Static Semantics: UTF16Encode ( _text_ )</h1>
       <p>The abstract operation UTF16Encode takes argument _text_ (a sequence of Unicode code points). It converts _text_ into a String value, as described in <emu-xref href="#sec-ecmascript-language-types-string-type"></emu-xref>. It performs the following steps when called:</p>
       <emu-alg>
-        1. Return the string-concatenation of the code units that are the UTF16Encoding of each code point in _text_, in order.
+        1. Return the string-concatenation of the code units that are the CodePointToUTF16CodeUnits of each code point in _text_, in order.
       </emu-alg>
     </emu-clause>
 
@@ -10946,13 +10946,13 @@
         <emu-grammar>IdentifierStart :: `\` UnicodeEscapeSequence</emu-grammar>
         <ul>
           <li>
-            It is a Syntax Error if the SV of |UnicodeEscapeSequence| is none of *"$"*, or *"_"*, or the UTF16Encoding of a code point matched by the |UnicodeIDStart| lexical grammar production.
+            It is a Syntax Error if the SV of |UnicodeEscapeSequence| is none of *"$"*, or *"_"*, or the CodePointToUTF16CodeUnits of a code point matched by the |UnicodeIDStart| lexical grammar production.
           </li>
         </ul>
         <emu-grammar>IdentifierPart :: `\` UnicodeEscapeSequence</emu-grammar>
         <ul>
           <li>
-            It is a Syntax Error if the SV of |UnicodeEscapeSequence| is none of *"$"*, or *"_"*, or the UTF16Encoding of either &lt;ZWNJ&gt; or &lt;ZWJ&gt;, or the UTF16Encoding of a Unicode code point that would be matched by the |UnicodeIDContinue| lexical grammar production.
+            It is a Syntax Error if the SV of |UnicodeEscapeSequence| is none of *"$"*, or *"_"*, or the CodePointToUTF16CodeUnits of either &lt;ZWNJ&gt; or &lt;ZWJ&gt;, or the CodePointToUTF16CodeUnits of a Unicode code point that would be matched by the |UnicodeIDContinue| lexical grammar production.
           </li>
         </ul>
       </emu-clause>
@@ -11378,7 +11378,7 @@
     <emu-clause id="sec-literals-string-literals">
       <h1>String Literals</h1>
       <emu-note>
-        <p>A string literal is zero or more Unicode code points enclosed in single or double quotes. Unicode code points may also be represented by an escape sequence. All code points may appear literally in a string literal except for the closing quote code points, U+005C (REVERSE SOLIDUS), U+000D (CARRIAGE RETURN), and U+000A (LINE FEED). Any code points may appear in the form of an escape sequence. String literals evaluate to ECMAScript String values. When generating these String values Unicode code points are UTF-16 encoded as defined in <emu-xref href="#sec-utf16encoding"></emu-xref>. Code points belonging to the Basic Multilingual Plane are encoded as a single code unit element of the string. All other code points are encoded as two code unit elements of the string.</p>
+        <p>A string literal is zero or more Unicode code points enclosed in single or double quotes. Unicode code points may also be represented by an escape sequence. All code points may appear literally in a string literal except for the closing quote code points, U+005C (REVERSE SOLIDUS), U+000D (CARRIAGE RETURN), and U+000A (LINE FEED). Any code points may appear in the form of an escape sequence. String literals evaluate to ECMAScript String values. When generating these String values Unicode code points are UTF-16 encoded as defined in <emu-xref href="#sec-codepointtoutf16codeunits"></emu-xref>. Code points belonging to the Basic Multilingual Plane are encoded as a single code unit element of the string. All other code points are encoded as two code unit elements of the string.</p>
       </emu-note>
       <h2>Syntax</h2>
       <emu-grammar type="definition">
@@ -11484,7 +11484,7 @@
             The SV of <emu-grammar>SingleStringCharacters :: SingleStringCharacter SingleStringCharacters</emu-grammar> is a sequence of up to two code units that is the SV of |SingleStringCharacter| followed by the code units of the SV of |SingleStringCharacters| in order.
           </li>
           <li>
-            The SV of <emu-grammar>DoubleStringCharacter :: SourceCharacter but not one of `"` or `\` or LineTerminator</emu-grammar> is the UTF16Encoding of the code point value of |SourceCharacter|.
+            The SV of <emu-grammar>DoubleStringCharacter :: SourceCharacter but not one of `"` or `\` or LineTerminator</emu-grammar> is the CodePointToUTF16CodeUnits of the code point value of |SourceCharacter|.
           </li>
           <li>
             The SV of <emu-grammar>DoubleStringCharacter :: &lt;LS&gt;</emu-grammar> is the code unit 0x2028 (LINE SEPARATOR).
@@ -11496,7 +11496,7 @@
             The SV of <emu-grammar>DoubleStringCharacter :: LineContinuation</emu-grammar> is the empty code unit sequence.
           </li>
           <li>
-            The SV of <emu-grammar>SingleStringCharacter :: SourceCharacter but not one of `'` or `\` or LineTerminator</emu-grammar> is the UTF16Encoding of the code point value of |SourceCharacter|.
+            The SV of <emu-grammar>SingleStringCharacter :: SourceCharacter but not one of `'` or `\` or LineTerminator</emu-grammar> is the CodePointToUTF16CodeUnits of the code point value of |SourceCharacter|.
           </li>
           <li>
             The SV of <emu-grammar>SingleStringCharacter :: &lt;LS&gt;</emu-grammar> is the code unit 0x2028 (LINE SEPARATOR).
@@ -11662,7 +11662,7 @@
         </emu-table>
         <ul>
           <li>
-            The SV of <emu-grammar>NonEscapeCharacter :: SourceCharacter but not one of EscapeCharacter or LineTerminator</emu-grammar> is the UTF16Encoding of the code point value of |SourceCharacter|.
+            The SV of <emu-grammar>NonEscapeCharacter :: SourceCharacter but not one of EscapeCharacter or LineTerminator</emu-grammar> is the CodePointToUTF16CodeUnits of the code point value of |SourceCharacter|.
           </li>
           <li>
             The SV of <emu-grammar>HexEscapeSequence :: `x` HexDigit HexDigit</emu-grammar> is the code unit whose value is (16<sub>ℝ</sub> times the MV of the first |HexDigit|) plus the MV of the second |HexDigit|.
@@ -11671,7 +11671,7 @@
             The SV of <emu-grammar>Hex4Digits :: HexDigit HexDigit HexDigit HexDigit</emu-grammar> is the code unit whose value is the MV of |Hex4Digits|.
           </li>
           <li>
-            The SV of <emu-grammar>UnicodeEscapeSequence :: `u{` CodePoint `}`</emu-grammar> is the UTF16Encoding of the MV of |CodePoint|.
+            The SV of <emu-grammar>UnicodeEscapeSequence :: `u{` CodePoint `}`</emu-grammar> is the CodePointToUTF16CodeUnits of the MV of |CodePoint|.
           </li>
         </ul>
       </emu-clause>
@@ -11837,7 +11837,7 @@
             The TV of <emu-grammar>TemplateCharacters :: TemplateCharacter TemplateCharacters</emu-grammar> is *undefined* if either the TV of |TemplateCharacter| is *undefined* or the TV of |TemplateCharacters| is *undefined*. Otherwise, it is a sequence consisting of the code units of the TV of |TemplateCharacter| followed by the code units of the TV of |TemplateCharacters|.
           </li>
           <li>
-            The TV of <emu-grammar>TemplateCharacter :: SourceCharacter but not one of ``` or `\` or `$` or LineTerminator</emu-grammar> is the UTF16Encoding of the code point value of |SourceCharacter|.
+            The TV of <emu-grammar>TemplateCharacter :: SourceCharacter but not one of ``` or `\` or `$` or LineTerminator</emu-grammar> is the CodePointToUTF16CodeUnits of the code point value of |SourceCharacter|.
           </li>
           <li>
             The TV of <emu-grammar>TemplateCharacter :: `$`</emu-grammar> is the code unit 0x0024 (DOLLAR SIGN).
@@ -11858,7 +11858,7 @@
             The TRV of <emu-grammar>TemplateCharacters :: TemplateCharacter TemplateCharacters</emu-grammar> is a sequence consisting of the code units of the TRV of |TemplateCharacter| followed by the code units of the TRV of |TemplateCharacters|.
           </li>
           <li>
-            The TRV of <emu-grammar>TemplateCharacter :: SourceCharacter but not one of ``` or `\` or `$` or LineTerminator</emu-grammar> is the UTF16Encoding of the code point value of |SourceCharacter|.
+            The TRV of <emu-grammar>TemplateCharacter :: SourceCharacter but not one of ``` or `\` or `$` or LineTerminator</emu-grammar> is the CodePointToUTF16CodeUnits of the code point value of |SourceCharacter|.
           </li>
           <li>
             The TRV of <emu-grammar>TemplateCharacter :: `$`</emu-grammar> is the code unit 0x0024 (DOLLAR SIGN).
@@ -11903,13 +11903,13 @@
             The TRV of <emu-grammar>NotEscapeSequence :: `u` `{` CodePoint [lookahead &lt;! HexDigit] [lookahead != `}`]</emu-grammar> is the sequence consisting of the code unit 0x0075 (LATIN SMALL LETTER U) followed by the code unit 0x007B (LEFT CURLY BRACKET) followed by the code units of the TRV of |CodePoint|.
           </li>
           <li>
-            The TRV of <emu-grammar>DecimalDigit :: one of `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`</emu-grammar> is the UTF16Encoding of the single code point matched by this production.
+            The TRV of <emu-grammar>DecimalDigit :: one of `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`</emu-grammar> is the CodePointToUTF16CodeUnits of the single code point matched by this production.
           </li>
           <li>
             The TRV of <emu-grammar>CharacterEscapeSequence :: NonEscapeCharacter</emu-grammar> is the SV of |NonEscapeCharacter|.
           </li>
           <li>
-            The TRV of <emu-grammar>SingleEscapeCharacter :: one of `'` `"` `\` `b` `f` `n` `r` `t` `v`</emu-grammar> is the UTF16Encoding of the single code point matched by this production.
+            The TRV of <emu-grammar>SingleEscapeCharacter :: one of `'` `"` `\` `b` `f` `n` `r` `t` `v`</emu-grammar> is the CodePointToUTF16CodeUnits of the single code point matched by this production.
           </li>
           <li>
             The TRV of <emu-grammar>HexEscapeSequence :: `x` HexDigit HexDigit</emu-grammar> is the sequence consisting of the code unit 0x0078 (LATIN SMALL LETTER X) followed by TRV of the first |HexDigit| followed by the TRV of the second |HexDigit|.
@@ -11927,7 +11927,7 @@
             The TRV of <emu-grammar>HexDigits :: HexDigits HexDigit</emu-grammar> is the sequence consisting of TRV of |HexDigits| followed by TRV of |HexDigit|.
           </li>
           <li>
-            The TRV of <emu-grammar>HexDigit :: one of `0` `1` `2` `3` `4` `5` `6` `7` `8` `9` `a` `b` `c` `d` `e` `f` `A` `B` `C` `D` `E` `F`</emu-grammar> is the UTF16Encoding of the single code point matched by this production.
+            The TRV of <emu-grammar>HexDigit :: one of `0` `1` `2` `3` `4` `5` `6` `7` `8` `9` `a` `b` `c` `d` `e` `f` `A` `B` `C` `D` `E` `F`</emu-grammar> is the CodePointToUTF16CodeUnits of the single code point matched by this production.
           </li>
           <li>
             The TRV of <emu-grammar>LineContinuation :: `\` LineTerminatorSequence</emu-grammar> is the sequence consisting of the code unit 0x005C (REVERSE SOLIDUS) followed by the code units of TRV of |LineTerminatorSequence|.
@@ -25249,7 +25249,7 @@
                     1. Set _j_ to _j_ + 1.
                   1. If _Octets_ does not contain a valid UTF-8 encoding of a Unicode code point, throw a *URIError* exception.
                   1. Let _V_ be the value obtained by applying the UTF-8 transformation to _Octets_, that is, from a List of octets into a 21-bit value.
-                  1. Let _S_ be the String value whose code units are, in order, the elements in UTF16Encoding(_V_).
+                  1. Let _S_ be the String value whose code units are, in order, the elements in CodePointToUTF16CodeUnits(_V_).
               1. Set _R_ to the string-concatenation of the previous value of _R_ and _S_.
               1. Set _k_ to _k_ + 1.
           </emu-alg>
@@ -29810,7 +29810,7 @@ THH:mm:ss.sss
             1. Let _nextCP_ be ? ToNumber(_next_).
             1. If ! IsInteger(_nextCP_) is *false*, throw a *RangeError* exception.
             1. If _nextCP_ &lt; 0 or _nextCP_ &gt; 0x10FFFF, throw a *RangeError* exception.
-            1. Append the elements of the UTF16Encoding of _nextCP_ to the end of _elements_.
+            1. Append the elements of the CodePointToUTF16CodeUnits of _nextCP_ to the end of _elements_.
             1. Set _nextIndex_ to _nextIndex_ + 1.
           1. Return the String value whose code units are, in order, the elements in the List _elements_. If _length_ is 0, the empty String is returned.
         </emu-alg>
@@ -38340,7 +38340,7 @@ THH:mm:ss.sss
               1. Let _unit_ be the code unit whose numeric value is that of _C_.
               1. Set _product_ to the string-concatenation of _product_ and UnicodeEscape(_unit_).
             1. Else,
-              1. Set _product_ to the string-concatenation of _product_ and the UTF16Encoding of _C_.
+              1. Set _product_ to the string-concatenation of _product_ and the CodePointToUTF16CodeUnits of _C_.
           1. Set _product_ to the string-concatenation of _product_ and the code unit 0x0022 (QUOTATION MARK).
           1. Return _product_.
         </emu-alg>
