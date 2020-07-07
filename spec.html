@@ -37139,7 +37139,7 @@ THH:mm:ss.sss
         <li>is designed to be subclassable. It may be used as the value of an `extends` clause of a class definition. Subclass constructors that intend to inherit the specified `SharedArrayBuffer` behaviour must include a `super` call to the `SharedArrayBuffer` constructor to create and initialize subclass instances with the internal state necessary to support the `SharedArrayBuffer.prototype` built-in methods.</li>
       </ul>
 
-      <p>If a host does not provide concurrent access to SharedArrayBuffer objects it may omit the *"SharedArrayBuffer"* property of the global object.</p>
+      <p>Whenever a host does not provide concurrent access to SharedArrayBuffer objects it may omit the *"SharedArrayBuffer"* property of the global object.</p>
 
       <emu-note>
         <p>Unlike an `ArrayBuffer`, a `SharedArrayBuffer` cannot become detached, and its internal [[ArrayBufferData]] slot is never *null*.</p>
